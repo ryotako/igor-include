@@ -183,7 +183,10 @@ static Function Add(procName) // for include_proxy.ipf
 	String procName
 	WAVE/T w=$INCLUDE_PATH
 	if(WaveExists(w))
-		InsertPoints DimSize(w,0),1,w; w[inf]=procName
+		Make/FREE/N=(DimSize(w,0)) f=abs(cmpstr(w,procName))
+		if(DimSize(f,0)==0 || WaveMin(f)==1)
+			InsertPoints DimSize(w,0),1,w; w[inf]=procName
+		endif
 	endif
 End
 
