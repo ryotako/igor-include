@@ -1,8 +1,10 @@
 #ifndef INCLUDE_CORE_INCLUDED
 #define INCLUDE_CORE_INCLUDED
 #pragma ModuleName=Include
-static strconstant MacEditor="MacVim"
-static strconstant WinEditor="C:\Program Files\vim75-kaoriya-win64\gvim.exe"
+//strconstant Include_MacEditor="MacVim"
+//strconstant Include_WinEditor="C:\Program Files\vim74-kaoriya-win64\gvim.exe"
+strconstant Include_MacEditor=""
+strconstant Include_WinEditor=""
 
 Menu "Include",dynamic
 	//{{{ Include
@@ -65,7 +67,7 @@ Menu "Include",dynamic
   	Include#IncludedItem(49),/Q,Include#Exclude(Include#Item(49))
 	End //}}}
 	//{{{ Edit Internally
-	SubMenu "Edit Internally"+SelectString(Include#ListExists(),"(","") 
+	SubMenu "Edit Internally"//+SelectString(Include#ListExists(),"(","")
   	Include#IncludedItem( 0),/Q,Include#InEdit(Include#Item( 0))
   	Include#IncludedItem( 1),/Q,Include#InEdit(Include#Item( 1))
   	Include#IncludedItem( 2),/Q,Include#InEdit(Include#Item( 2))
@@ -119,7 +121,7 @@ Menu "Include",dynamic
   	Include#IncludedItem(49),/Q,Include#InEdit(Include#Item(49))
  	End //}}}
 	//{{{ Edit Externally
-	SubMenu "Edit Externally"+SelectString(Include#ListExists(),"(","") 
+	SubMenu "Edit Externally"//+SelectString(Include#ListExists()&&Include#IsExEditable(),"(","")
   	Include#IncludedItem( 0),/Q,Include#ExEdit(Include#Item( 0))
   	Include#IncludedItem( 1),/Q,Include#ExEdit(Include#Item( 1))
   	Include#IncludedItem( 2),/Q,Include#ExEdit(Include#Item( 2))
@@ -174,18 +176,32 @@ Menu "Include",dynamic
  	End //}}}
 End
 
-static strconstant INCLUDE_PATH="root:Packages:Include:procedures"
-Function Include(procName)
-	String procName
-	return Add(procName)
+Function Include(procName [comment,define,override])
+	String procName,comment,define,override
+	comment  =SelectString(ParamIsDefault(comment ),comment ,"")
+	define   =SelectString(ParamIsDefault(define  ),define  ,"")
+	;override=SelectString(ParamIsDefault(override),override,"")
+	return Add(procName,comment=comment,define=define,override=override)
 End
-static Function Add(procName) // for include_proxy.ipf
-	String procName
+static Function Add(procName [comment,define,override]) // for include_proxy.ipf
+	String procName,comment,define,override
+	comment  =SelectString(ParamIsDefault(comment ),comment ,"")
+	define   =SelectString(ParamIsDefault(define  ),define  ,"")
+	;override=SelectString(ParamIsDefault(override),override,"")
 	WAVE/T w=$INCLUDE_PATH
 	if(WaveExists(w))
 		Make/FREE/N=(DimSize(w,0)) f=abs(cmpstr(w,procName))
 		if(DimSize(f,0)==0 || WaveMin(f)==1)
-			InsertPoints DimSize(w,0),1,w; w[inf]=procName
+			InsertPoints DimSize(w,0),1,w
+			w[inf][%procName]=procName
+			w[inf][%comment ]=comment
+			w[inf][%define  ]=RemoveFromList("",AddListItem(define  ,w[inf][%define  ]))
+			w[inf][%override]=RemoveFromList("",AddListItem(override,w[inf][%override]))
+		else
+			WaveStats/Q/Z f;
+			w[V_minloc][%comment ]+=comment
+			w[V_minloc][%define  ]=RemoveFromList("",AddListItem(define  ,w[V_minloc][%define  ]))
+			w[V_minloc][%override]=RemoveFromList("",AddListItem(override,w[V_minloc][%override]))
 		endif
 	endif
 End
@@ -213,17 +229,52 @@ static Function/S IncludedItem(n)
 	endif
 End
 
+static strconstant INCLUDE_PATH="root:Packages:Include:procedures"
+static strconstant INCLUDE_PATH_OVER="root:Packages:Include:overrides"
 static Function IncludeAll()
 	if(!ListIsDefined())
 		return NaN
 	endif
 	NewDataFolder/O root:Packages
 	NewDataFolder/O root:Packages:Include
-	Make/O/T/N=0 $INCLUDE_PATH // remake the list
+	Make/O/T/N=(0,4) $INCLUDE_PATH/WAVE=w // remake the list
+	if(!WaveExists($INCLUDE_PATH_OVER))
+		Make/O/T/N=0 $INCLUDE_PATH_OVER	
+	endif
+	SetDimLabel 1,0,procName,w
+	SetDimLabel 1,1,comment ,w
+	SetDimLabel 1,2,define  ,w
+	SetDimLabel 1,3,override,w
 	Execute/Z/Q "IncludeList()"
-	WAVE/T w=$INCLUDE_PATH; Variable i
+	Variable i
 	for(i=0;i<DimSize(w,0);i+=1)
-		Execute/P/Z/Q "INSERTINCLUDE \""+w[i]+"\""
+		Execute/P/Z/Q "DELETEINCLUDE \""+w[i][%procName]+"\""		
+		String cmd="INSERTINCLUDE \""+w[i][%procName]+"\"" // Add procName
+		cmd += SelectString(strlen(w[i][%comment]),""," //")+w[i][%comment] // Add comment
+		if(ItemsInList(w[i][%define])) // Add define
+			Variable j
+			for(j=0;j<ItemsInList(w[i][%define]);j+=1)
+				if(!defined($StringFromList(j,w[i][%define])))
+					cmd+="\r#define "+StringFromList(j,w[i][%define])
+				endif
+			endfor
+		endif
+		if(ItemsInList(w[i][%override])) //Add override
+			Variable k; WAVE/T over=$INCLUDE_PATH_OVER
+			for(k=0;k<ItemsInList(w[i][%override]);k+=1)
+				String overexpr=StringFromList(k,w[i][%override])
+				Make/FREE/N=(DimSize(over,0)) f=abs(cmpstr(over,overexpr))
+				if(DimSize(f,0)==0||WaveMin(f)>0)
+					InsertPoints DimSize(over,0),1,over; over[inf]=overexpr
+					if(GrepString(overexpr,"= *[0-9]*(.[0-9]+)? *$"))
+						cmd+="\roverride constant "+overexpr
+					elseif(GrepString(overexpr,"= *\".*\" *$"))
+						cmd+="\roverride strconstant "+overexpr	
+					endif
+				endif
+			endfor
+		endif
+		Execute/P/Z/Q cmd
 	endfor
 	Execute/P/Z/Q "COMPILEPROCEDURES "
 End
@@ -231,7 +282,7 @@ End
 static Function ExcludeAll()
 	WAVE/T w=$INCLUDE_PATH; Variable i
 	for(i=0;i<DimSize(w,0);i+=1)
-		Execute/P/Z/Q "DELETEINCLUDE \""+w[i]+"\""
+		Execute/P/Z/Q "DELETEINCLUDE \""+w[i][%procName]+"\""
 	endfor
 	Execute/P/Z/Q "COMPILEPROCEDURES "
 End
@@ -252,13 +303,19 @@ static Function ExEdit(procName)
 	String procPath=FunctionPath(funcName)
 	strSwitch(IgorInfo(2))
 	case "Macintosh":
+		if(strlen(Include_MacEditor)==0)
+			break
+		endif
 		procPath=procPath[strlen("Macintosh HD"),inf] 
 		procPath=ReplaceString(":",procPath,"'/'")[1,inf]+"'" // escape with ''
-		ExecuteScriptText "do shell script \"open -a "+MacEditor+" "+procPath+"\""
+		ExecuteScriptText "do shell script \"open -a "+Include_MacEditor+" "+procPath+"\""
 	break
 	case "Windows":
+		if(strlen(Include_WinEditor)==0)
+			break
+		endif
 		procPath="\"C:"+ReplaceString(":",procPath[strlen("C"),inf],"\\")+"\"" // escape with ""
-		ExecuteScriptText "\""+WinEditor+"\" "+procPath
+		ExecuteScriptText "\""+Include_WinEditor+"\" "+procPath
 	break
 	endSwitch
 End
@@ -267,5 +324,22 @@ static Function InEdit(procName)
 	String procName
 	DisplayProcedure/W=$procName+".ipf"
 End
+
+static Function IsExEditable()
+	strSwitch(IgorInfo(2))
+	case "Macintosh":
+		if(strlen(Include_MacEditor))
+			return 1
+		endif
+	break
+	case "Windows":
+		if(strlen(Include_WinEditor))
+			return 1
+		endif
+	break
+	endSwitch
+	return 0
+End
+
 
 #endif
