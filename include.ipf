@@ -1,10 +1,36 @@
 #ifndef INCLUDE_CORE_INCLUDED
 #define INCLUDE_CORE_INCLUDED
 #pragma ModuleName=Include
-//strconstant Include_MacEditor="MacVim"
-//strconstant Include_WinEditor="C:\Program Files\vim74-kaoriya-win64\gvim.exe"
 strconstant Include_MacEditor=""
 strconstant Include_WinEditor=""
+// 定数定義をoverride.ipfに任せる形で再設計
+// defineは直に書けば良い．
+
+// include文の機能として
+// 1. includeそのもの
+// 2. nomenus=1指定
+// 3. version >= 1.00 のようなバージョン指定
+// 4. optional指定
+// は必須.
+// 5. コメントの追加
+// はinclude("foo") // コメント, の表記にすれば良い気はする．
+
+// includeするipfファイル一覧は一度ウェーブに書き出す．理由は
+// 1. エラーをまとめて処理するため．
+// 2. 編集コマンド等で再利用するため
+
+// 必要な機能
+// 1. 内部エディタで編集可能な状態で開く
+// 2. 外部エディタで安全に開く
+
+// 外部エディタで安全に開く，とは
+// 1. igorから除去されていないファイルをエディタで開かない
+// 2. 外部プログラムで使用されているファイルをigorに読み込まない
+// のいずれか．
+
+// includeする前にそのファイルを破棄する，とすると安全になるか？
+
+// optional 付きインクルードが可能なら，あえてコマンドにする意味はあるのか？
 
 Menu "Include",dynamic
 	//{{{ Include
