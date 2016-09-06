@@ -35,6 +35,9 @@ static Function MakeBufferFile()
 	sprintf path,"%sUser Procedures:%s.ipf",SpecialDirPath("Igor Pro User Files",0,0,0),Include_BufferFileName
 	Open/Z refnum as path
 	if(WaveExists(ps) && !V_Flag)
+		// Make it invisible
+		SetFileFolderInfo/INV=1/RO=1 path
+		
 		Variable i,N=DimSize(ps,0)
 		for(i=0;i<N;i+=1)
 			fprintf refnum,"#include \"%s\", optional\r",ps[i]	
