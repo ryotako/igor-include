@@ -10,6 +10,38 @@ Menu StringFromList(0,Include_Menu)
 	RemoveListItem(0,Include_Menu)
 	Include#MenuItemInclude(),/Q,Include#MenuCommandInclude()
 	Include#MenuItemExclude(),/Q,Include#MenuCommandExclude()
+	SubMenu "Edit Internally"
+		Include#MenuItemEditInternally(0),  /Q, Include#MenuCommandEditInternally(0)
+		Include#MenuItemEditInternally(1),  /Q, Include#MenuCommandEditInternally(1)
+		Include#MenuItemEditInternally(2),  /Q, Include#MenuCommandEditInternally(2)
+		Include#MenuItemEditInternally(3),  /Q, Include#MenuCommandEditInternally(3)
+		Include#MenuItemEditInternally(4),  /Q, Include#MenuCommandEditInternally(4)
+		Include#MenuItemEditInternally(5),  /Q, Include#MenuCommandEditInternally(5)
+		Include#MenuItemEditInternally(6),  /Q, Include#MenuCommandEditInternally(6)
+		Include#MenuItemEditInternally(7),  /Q, Include#MenuCommandEditInternally(7)
+		Include#MenuItemEditInternally(8),  /Q, Include#MenuCommandEditInternally(8)
+		Include#MenuItemEditInternally(9),  /Q, Include#MenuCommandEditInternally(9)
+		Include#MenuItemEditInternally(10), /Q, Include#MenuCommandEditInternally(10)
+		Include#MenuItemEditInternally(11), /Q, Include#MenuCommandEditInternally(11)
+		Include#MenuItemEditInternally(12), /Q, Include#MenuCommandEditInternally(12)
+		Include#MenuItemEditInternally(13), /Q, Include#MenuCommandEditInternally(13)
+		Include#MenuItemEditInternally(14), /Q, Include#MenuCommandEditInternally(14)
+		Include#MenuItemEditInternally(15), /Q, Include#MenuCommandEditInternally(15)
+		Include#MenuItemEditInternally(16), /Q, Include#MenuCommandEditInternally(16)
+		Include#MenuItemEditInternally(17), /Q, Include#MenuCommandEditInternally(17)
+		Include#MenuItemEditInternally(18), /Q, Include#MenuCommandEditInternally(18)
+		Include#MenuItemEditInternally(19), /Q, Include#MenuCommandEditInternally(19)
+		Include#MenuItemEditInternally(20), /Q, Include#MenuCommandEditInternally(20)
+		Include#MenuItemEditInternally(21), /Q, Include#MenuCommandEditInternally(21)
+		Include#MenuItemEditInternally(22), /Q, Include#MenuCommandEditInternally(22)
+		Include#MenuItemEditInternally(23), /Q, Include#MenuCommandEditInternally(23)
+		Include#MenuItemEditInternally(24), /Q, Include#MenuCommandEditInternally(24)
+		Include#MenuItemEditInternally(25), /Q, Include#MenuCommandEditInternally(25)
+		Include#MenuItemEditInternally(26), /Q, Include#MenuCommandEditInternally(26)
+		Include#MenuItemEditInternally(27), /Q, Include#MenuCommandEditInternally(27)
+		Include#MenuItemEditInternally(28), /Q, Include#MenuCommandEditInternally(28)
+		Include#MenuItemEditInternally(29), /Q, Include#MenuCommandEditInternally(29)
+	End
 	SubMenu "Edit Externally"
 		Include#MenuItemEditExternally(0),  /Q, Include#MenuCommandEditExternally(0)
 		Include#MenuItemEditExternally(1),  /Q, Include#MenuCommandEditExternally(1)
@@ -56,6 +88,23 @@ End
 static Function MenuCommandExclude()
 	Execute/P "DELETEINCLUDE \""+Include_BufferFileName+"\""
 	Execute/P "COMPILEPROCEDURES "
+End
+
+static Function/S MenuItemEditInternally(n)
+	Variable n
+	WAVE/T ps = root:Packages:include:procedures_sorted
+	if(!WaveExists(ps) || n>=DimSize(ps,0))
+		return ""
+	elseif(strlen(WinRecreation(Include_BufferFileName+".ipf",-2)))
+		return ps[n]	
+	else
+		return "("+ps[n]
+	endif
+End
+static Function/S MenuCommandEditInternally(n)
+	Variable n
+	WAVE/T ps = root:Packages:include:procedures_sorted
+	EditInternally(ps[n])
 End
 
 static Function/S MenuItemEditExternally(n)
@@ -123,6 +172,11 @@ static Function MakeBufferFile()
 		endfor
 		Close refnum
 	endif
+End
+
+static Function EditInternally(procname)
+	String procname
+	DisplayProcedure/W=$procname+".ipf"
 End
 
 static Function EditExternally(procname)
