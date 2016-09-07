@@ -77,7 +77,7 @@ Menu StringFromList(0,Include_Menu)
 End
 
 static Function/S MenuItemInclude()
-	return SelectString( NumberByKey("N_PARAMS",FunctionInfo(Include_ListFunction)) ,"","(")+"Include"
+	return SelectString( NumberByKey("N_PARAMS",FunctionInfo(Include_ListFunction))==0 ,"(","")+"Include"
 End
 static Function MenuCommandInclude()
 	Execute/Z Include_ListFunction+"()"
