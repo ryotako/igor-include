@@ -1,371 +1,215 @@
-#ifndef INCLUDE_CORE_INCLUDED
-#define INCLUDE_CORE_INCLUDED
-#pragma ModuleName=Include
-strconstant Include_MacEditor=""
-strconstant Include_WinEditor=""
-// 定数定義をoverride.ipfに任せる形で再設計
-// defineは直に書けば良い．
+#pragma ModuleName=include
 
-// include文の機能として
-// 1. includeそのもの
-// 2. nomenus=1指定
-// 3. version >= 1.00 のようなバージョン指定
-// 4. optional指定
-// は必須.
-// 5. コメントの追加
-// はinclude("foo") // コメント, の表記にすれば良い気はする．
+strconstant Include_Menu = "Include"
+strconstant Include_BufferFileName = "include_procedures"
+strconstant Include_ListFunction = "IncludeList" 
+strconstant Include_WinEditor = "notepad.exe"
+strconstant Include_MacEditor = "TextEdit"
 
-// includeするipfファイル一覧は一度ウェーブに書き出す．理由は
-// 1. エラーをまとめて処理するため．
-// 2. 編集コマンド等で再利用するため
-
-// 必要な機能
-// 1. 内部エディタで編集可能な状態で開く
-// 2. 外部エディタで安全に開く
-
-// 外部エディタで安全に開く，とは
-// 1. igorから除去されていないファイルをエディタで開かない
-// 2. 外部プログラムで使用されているファイルをigorに読み込まない
-// のいずれか．
-
-// includeする前にそのファイルを破棄する，とすると安全になるか？
-
-// optional 付きインクルードが可能なら，あえてコマンドにする意味はあるのか？
-
-Menu "Include",dynamic
-	//{{{ Include
-	"Include" +SelectString(Include#ListIsDefined(),"(",""),/Q,Include#IncludeAll()
-	//}}}
-	//{{{ Exclude
- 	SubMenu "Exclude"+SelectString(Include#ListExists(),"(","") 
-  	"All",/Q,Include#ExcludeAll()
-  	"----------"
-  	Include#IncludedItem( 0),/Q,Include#Exclude(Include#Item( 0))
-  	Include#IncludedItem( 1),/Q,Include#Exclude(Include#Item( 1))
-  	Include#IncludedItem( 2),/Q,Include#Exclude(Include#Item( 2))
-  	Include#IncludedItem( 3),/Q,Include#Exclude(Include#Item( 3))
-  	Include#IncludedItem( 4),/Q,Include#Exclude(Include#Item( 4))
-  	Include#IncludedItem( 5),/Q,Include#Exclude(Include#Item( 5))
-  	Include#IncludedItem( 6),/Q,Include#Exclude(Include#Item( 6))
-  	Include#IncludedItem( 7),/Q,Include#Exclude(Include#Item( 7))
-  	Include#IncludedItem( 8),/Q,Include#Exclude(Include#Item( 8))
-  	Include#IncludedItem( 9),/Q,Include#Exclude(Include#Item( 9))
-  	Include#IncludedItem(10),/Q,Include#Exclude(Include#Item(10))
-  	Include#IncludedItem(11),/Q,Include#Exclude(Include#Item(11))
-  	Include#IncludedItem(12),/Q,Include#Exclude(Include#Item(12))
-  	Include#IncludedItem(13),/Q,Include#Exclude(Include#Item(13))
-  	Include#IncludedItem(14),/Q,Include#Exclude(Include#Item(14))
-  	Include#IncludedItem(15),/Q,Include#Exclude(Include#Item(15))
-  	Include#IncludedItem(16),/Q,Include#Exclude(Include#Item(16))
-  	Include#IncludedItem(17),/Q,Include#Exclude(Include#Item(17))
-  	Include#IncludedItem(18),/Q,Include#Exclude(Include#Item(18))
-  	Include#IncludedItem(19),/Q,Include#Exclude(Include#Item(19))
-  	Include#IncludedItem(20),/Q,Include#Exclude(Include#Item(20))
-  	Include#IncludedItem(21),/Q,Include#Exclude(Include#Item(21))
-  	Include#IncludedItem(22),/Q,Include#Exclude(Include#Item(22))
-  	Include#IncludedItem(23),/Q,Include#Exclude(Include#Item(23))
-  	Include#IncludedItem(24),/Q,Include#Exclude(Include#Item(24))
-  	Include#IncludedItem(25),/Q,Include#Exclude(Include#Item(25))
-  	Include#IncludedItem(26),/Q,Include#Exclude(Include#Item(26))
-  	Include#IncludedItem(27),/Q,Include#Exclude(Include#Item(27))
-  	Include#IncludedItem(28),/Q,Include#Exclude(Include#Item(28))
-  	Include#IncludedItem(29),/Q,Include#Exclude(Include#Item(29))
-  	Include#IncludedItem(30),/Q,Include#Exclude(Include#Item(30))
-  	Include#IncludedItem(31),/Q,Include#Exclude(Include#Item(31))
-  	Include#IncludedItem(32),/Q,Include#Exclude(Include#Item(32))
-  	Include#IncludedItem(33),/Q,Include#Exclude(Include#Item(33))
-  	Include#IncludedItem(34),/Q,Include#Exclude(Include#Item(34))
-  	Include#IncludedItem(35),/Q,Include#Exclude(Include#Item(35))
-  	Include#IncludedItem(36),/Q,Include#Exclude(Include#Item(36))
-  	Include#IncludedItem(37),/Q,Include#Exclude(Include#Item(37))
-  	Include#IncludedItem(38),/Q,Include#Exclude(Include#Item(38))
-  	Include#IncludedItem(39),/Q,Include#Exclude(Include#Item(39))
-  	Include#IncludedItem(40),/Q,Include#Exclude(Include#Item(40))
-  	Include#IncludedItem(41),/Q,Include#Exclude(Include#Item(41))
-  	Include#IncludedItem(42),/Q,Include#Exclude(Include#Item(42))
-  	Include#IncludedItem(43),/Q,Include#Exclude(Include#Item(43))
-  	Include#IncludedItem(44),/Q,Include#Exclude(Include#Item(44))
-  	Include#IncludedItem(45),/Q,Include#Exclude(Include#Item(45))
-  	Include#IncludedItem(46),/Q,Include#Exclude(Include#Item(46))
-  	Include#IncludedItem(47),/Q,Include#Exclude(Include#Item(47))
-  	Include#IncludedItem(48),/Q,Include#Exclude(Include#Item(48))
-  	Include#IncludedItem(49),/Q,Include#Exclude(Include#Item(49))
-  	Include#IncludedItem(49),/Q,Include#Exclude(Include#Item(49))
-	End //}}}
-	//{{{ Edit Internally
-	SubMenu "Edit Internally"//+SelectString(Include#ListExists(),"(","")
-  	Include#IncludedItem( 0),/Q,Include#InEdit(Include#Item( 0))
-  	Include#IncludedItem( 1),/Q,Include#InEdit(Include#Item( 1))
-  	Include#IncludedItem( 2),/Q,Include#InEdit(Include#Item( 2))
-  	Include#IncludedItem( 3),/Q,Include#InEdit(Include#Item( 3))
-  	Include#IncludedItem( 4),/Q,Include#InEdit(Include#Item( 4))
-  	Include#IncludedItem( 5),/Q,Include#InEdit(Include#Item( 5))
-  	Include#IncludedItem( 6),/Q,Include#InEdit(Include#Item( 6))
-  	Include#IncludedItem( 7),/Q,Include#InEdit(Include#Item( 7))
-  	Include#IncludedItem( 8),/Q,Include#InEdit(Include#Item( 8))
-  	Include#IncludedItem( 9),/Q,Include#InEdit(Include#Item( 9))
-  	Include#IncludedItem(10),/Q,Include#InEdit(Include#Item(10))
-  	Include#IncludedItem(11),/Q,Include#InEdit(Include#Item(11))
-  	Include#IncludedItem(12),/Q,Include#InEdit(Include#Item(12))
-  	Include#IncludedItem(13),/Q,Include#InEdit(Include#Item(13))
-  	Include#IncludedItem(14),/Q,Include#InEdit(Include#Item(14))
-  	Include#IncludedItem(15),/Q,Include#InEdit(Include#Item(15))
-  	Include#IncludedItem(16),/Q,Include#InEdit(Include#Item(16))
-  	Include#IncludedItem(17),/Q,Include#InEdit(Include#Item(17))
-  	Include#IncludedItem(18),/Q,Include#InEdit(Include#Item(18))
-  	Include#IncludedItem(19),/Q,Include#InEdit(Include#Item(19))
-  	Include#IncludedItem(20),/Q,Include#InEdit(Include#Item(20))
-  	Include#IncludedItem(21),/Q,Include#InEdit(Include#Item(21))
-  	Include#IncludedItem(22),/Q,Include#InEdit(Include#Item(22))
-  	Include#IncludedItem(23),/Q,Include#InEdit(Include#Item(23))
-  	Include#IncludedItem(24),/Q,Include#InEdit(Include#Item(24))
-  	Include#IncludedItem(25),/Q,Include#InEdit(Include#Item(25))
-  	Include#IncludedItem(26),/Q,Include#InEdit(Include#Item(26))
-  	Include#IncludedItem(27),/Q,Include#InEdit(Include#Item(27))
-  	Include#IncludedItem(28),/Q,Include#InEdit(Include#Item(28))
-  	Include#IncludedItem(29),/Q,Include#InEdit(Include#Item(29))
-  	Include#IncludedItem(30),/Q,Include#InEdit(Include#Item(30))
-  	Include#IncludedItem(31),/Q,Include#InEdit(Include#Item(31))
-  	Include#IncludedItem(32),/Q,Include#InEdit(Include#Item(32))
-  	Include#IncludedItem(33),/Q,Include#InEdit(Include#Item(33))
-  	Include#IncludedItem(34),/Q,Include#InEdit(Include#Item(34))
-  	Include#IncludedItem(35),/Q,Include#InEdit(Include#Item(35))
-  	Include#IncludedItem(36),/Q,Include#InEdit(Include#Item(36))
-  	Include#IncludedItem(37),/Q,Include#InEdit(Include#Item(37))
-  	Include#IncludedItem(38),/Q,Include#InEdit(Include#Item(38))
-  	Include#IncludedItem(39),/Q,Include#InEdit(Include#Item(39))
-  	Include#IncludedItem(40),/Q,Include#InEdit(Include#Item(40))
-  	Include#IncludedItem(41),/Q,Include#InEdit(Include#Item(41))
-  	Include#IncludedItem(42),/Q,Include#InEdit(Include#Item(42))
-  	Include#IncludedItem(43),/Q,Include#InEdit(Include#Item(43))
-  	Include#IncludedItem(44),/Q,Include#InEdit(Include#Item(44))
-  	Include#IncludedItem(45),/Q,Include#InEdit(Include#Item(45))
-  	Include#IncludedItem(46),/Q,Include#InEdit(Include#Item(46))
-  	Include#IncludedItem(47),/Q,Include#InEdit(Include#Item(47))
-  	Include#IncludedItem(48),/Q,Include#InEdit(Include#Item(48))
-  	Include#IncludedItem(49),/Q,Include#InEdit(Include#Item(49))
-  	Include#IncludedItem(49),/Q,Include#InEdit(Include#Item(49))
- 	End //}}}
-	//{{{ Edit Externally
-	SubMenu "Edit Externally"//+SelectString(Include#ListExists()&&Include#IsExEditable(),"(","")
-  	Include#IncludedItem( 0),/Q,Include#ExEdit(Include#Item( 0))
-  	Include#IncludedItem( 1),/Q,Include#ExEdit(Include#Item( 1))
-  	Include#IncludedItem( 2),/Q,Include#ExEdit(Include#Item( 2))
-  	Include#IncludedItem( 3),/Q,Include#ExEdit(Include#Item( 3))
-  	Include#IncludedItem( 4),/Q,Include#ExEdit(Include#Item( 4))
-  	Include#IncludedItem( 5),/Q,Include#ExEdit(Include#Item( 5))
-  	Include#IncludedItem( 6),/Q,Include#ExEdit(Include#Item( 6))
-  	Include#IncludedItem( 7),/Q,Include#ExEdit(Include#Item( 7))
-  	Include#IncludedItem( 8),/Q,Include#ExEdit(Include#Item( 8))
-  	Include#IncludedItem( 9),/Q,Include#ExEdit(Include#Item( 9))
-  	Include#IncludedItem(10),/Q,Include#ExEdit(Include#Item(10))
-  	Include#IncludedItem(11),/Q,Include#ExEdit(Include#Item(11))
-  	Include#IncludedItem(12),/Q,Include#ExEdit(Include#Item(12))
-  	Include#IncludedItem(13),/Q,Include#ExEdit(Include#Item(13))
-  	Include#IncludedItem(14),/Q,Include#ExEdit(Include#Item(14))
-  	Include#IncludedItem(15),/Q,Include#ExEdit(Include#Item(15))
-  	Include#IncludedItem(16),/Q,Include#ExEdit(Include#Item(16))
-  	Include#IncludedItem(17),/Q,Include#ExEdit(Include#Item(17))
-  	Include#IncludedItem(18),/Q,Include#ExEdit(Include#Item(18))
-  	Include#IncludedItem(19),/Q,Include#ExEdit(Include#Item(19))
-  	Include#IncludedItem(20),/Q,Include#ExEdit(Include#Item(20))
-  	Include#IncludedItem(21),/Q,Include#ExEdit(Include#Item(21))
-  	Include#IncludedItem(22),/Q,Include#ExEdit(Include#Item(22))
-  	Include#IncludedItem(23),/Q,Include#ExEdit(Include#Item(23))
-  	Include#IncludedItem(24),/Q,Include#ExEdit(Include#Item(24))
-  	Include#IncludedItem(25),/Q,Include#ExEdit(Include#Item(25))
-  	Include#IncludedItem(26),/Q,Include#ExEdit(Include#Item(26))
-  	Include#IncludedItem(27),/Q,Include#ExEdit(Include#Item(27))
-  	Include#IncludedItem(28),/Q,Include#ExEdit(Include#Item(28))
-  	Include#IncludedItem(29),/Q,Include#ExEdit(Include#Item(29))
-  	Include#IncludedItem(30),/Q,Include#ExEdit(Include#Item(30))
-  	Include#IncludedItem(31),/Q,Include#ExEdit(Include#Item(31))
-  	Include#IncludedItem(32),/Q,Include#ExEdit(Include#Item(32))
-  	Include#IncludedItem(33),/Q,Include#ExEdit(Include#Item(33))
-  	Include#IncludedItem(34),/Q,Include#ExEdit(Include#Item(34))
-  	Include#IncludedItem(35),/Q,Include#ExEdit(Include#Item(35))
-  	Include#IncludedItem(36),/Q,Include#ExEdit(Include#Item(36))
-  	Include#IncludedItem(37),/Q,Include#ExEdit(Include#Item(37))
-  	Include#IncludedItem(38),/Q,Include#ExEdit(Include#Item(38))
-  	Include#IncludedItem(39),/Q,Include#ExEdit(Include#Item(39))
-  	Include#IncludedItem(40),/Q,Include#ExEdit(Include#Item(40))
-  	Include#IncludedItem(41),/Q,Include#ExEdit(Include#Item(41))
-  	Include#IncludedItem(42),/Q,Include#ExEdit(Include#Item(42))
-  	Include#IncludedItem(43),/Q,Include#ExEdit(Include#Item(43))
-  	Include#IncludedItem(44),/Q,Include#ExEdit(Include#Item(44))
-  	Include#IncludedItem(45),/Q,Include#ExEdit(Include#Item(45))
-  	Include#IncludedItem(46),/Q,Include#ExEdit(Include#Item(46))
-  	Include#IncludedItem(47),/Q,Include#ExEdit(Include#Item(47))
-  	Include#IncludedItem(48),/Q,Include#ExEdit(Include#Item(48))
-  	Include#IncludedItem(49),/Q,Include#ExEdit(Include#Item(49))
-  	Include#IncludedItem(49),/Q,Include#ExEdit(Include#Item(49))
- 	End //}}}
+Menu StringFromList(0,Include_Menu)
+	RemoveListItem(0,Include_Menu)
+	Include#MenuItemInclude(),/Q,Include#MenuCommandInclude()
+	Include#MenuItemExclude(),/Q,Include#MenuCommandExclude()
+	SubMenu "Edit Internally"
+		Include#MenuItemEditInternally(0),  /Q, Include#MenuCommandEditInternally(0)
+		Include#MenuItemEditInternally(1),  /Q, Include#MenuCommandEditInternally(1)
+		Include#MenuItemEditInternally(2),  /Q, Include#MenuCommandEditInternally(2)
+		Include#MenuItemEditInternally(3),  /Q, Include#MenuCommandEditInternally(3)
+		Include#MenuItemEditInternally(4),  /Q, Include#MenuCommandEditInternally(4)
+		Include#MenuItemEditInternally(5),  /Q, Include#MenuCommandEditInternally(5)
+		Include#MenuItemEditInternally(6),  /Q, Include#MenuCommandEditInternally(6)
+		Include#MenuItemEditInternally(7),  /Q, Include#MenuCommandEditInternally(7)
+		Include#MenuItemEditInternally(8),  /Q, Include#MenuCommandEditInternally(8)
+		Include#MenuItemEditInternally(9),  /Q, Include#MenuCommandEditInternally(9)
+		Include#MenuItemEditInternally(10), /Q, Include#MenuCommandEditInternally(10)
+		Include#MenuItemEditInternally(11), /Q, Include#MenuCommandEditInternally(11)
+		Include#MenuItemEditInternally(12), /Q, Include#MenuCommandEditInternally(12)
+		Include#MenuItemEditInternally(13), /Q, Include#MenuCommandEditInternally(13)
+		Include#MenuItemEditInternally(14), /Q, Include#MenuCommandEditInternally(14)
+		Include#MenuItemEditInternally(15), /Q, Include#MenuCommandEditInternally(15)
+		Include#MenuItemEditInternally(16), /Q, Include#MenuCommandEditInternally(16)
+		Include#MenuItemEditInternally(17), /Q, Include#MenuCommandEditInternally(17)
+		Include#MenuItemEditInternally(18), /Q, Include#MenuCommandEditInternally(18)
+		Include#MenuItemEditInternally(19), /Q, Include#MenuCommandEditInternally(19)
+		Include#MenuItemEditInternally(20), /Q, Include#MenuCommandEditInternally(20)
+		Include#MenuItemEditInternally(21), /Q, Include#MenuCommandEditInternally(21)
+		Include#MenuItemEditInternally(22), /Q, Include#MenuCommandEditInternally(22)
+		Include#MenuItemEditInternally(23), /Q, Include#MenuCommandEditInternally(23)
+		Include#MenuItemEditInternally(24), /Q, Include#MenuCommandEditInternally(24)
+		Include#MenuItemEditInternally(25), /Q, Include#MenuCommandEditInternally(25)
+		Include#MenuItemEditInternally(26), /Q, Include#MenuCommandEditInternally(26)
+		Include#MenuItemEditInternally(27), /Q, Include#MenuCommandEditInternally(27)
+		Include#MenuItemEditInternally(28), /Q, Include#MenuCommandEditInternally(28)
+		Include#MenuItemEditInternally(29), /Q, Include#MenuCommandEditInternally(29)
+	End
+	SubMenu "Edit Externally"
+		Include#MenuItemEditExternally(0),  /Q, Include#MenuCommandEditExternally(0)
+		Include#MenuItemEditExternally(1),  /Q, Include#MenuCommandEditExternally(1)
+		Include#MenuItemEditExternally(2),  /Q, Include#MenuCommandEditExternally(2)
+		Include#MenuItemEditExternally(3),  /Q, Include#MenuCommandEditExternally(3)
+		Include#MenuItemEditExternally(4),  /Q, Include#MenuCommandEditExternally(4)
+		Include#MenuItemEditExternally(5),  /Q, Include#MenuCommandEditExternally(5)
+		Include#MenuItemEditExternally(6),  /Q, Include#MenuCommandEditExternally(6)
+		Include#MenuItemEditExternally(7),  /Q, Include#MenuCommandEditExternally(7)
+		Include#MenuItemEditExternally(8),  /Q, Include#MenuCommandEditExternally(8)
+		Include#MenuItemEditExternally(9),  /Q, Include#MenuCommandEditExternally(9)
+		Include#MenuItemEditExternally(10), /Q, Include#MenuCommandEditExternally(10)
+		Include#MenuItemEditExternally(11), /Q, Include#MenuCommandEditExternally(11)
+		Include#MenuItemEditExternally(12), /Q, Include#MenuCommandEditExternally(12)
+		Include#MenuItemEditExternally(13), /Q, Include#MenuCommandEditExternally(13)
+		Include#MenuItemEditExternally(14), /Q, Include#MenuCommandEditExternally(14)
+		Include#MenuItemEditExternally(15), /Q, Include#MenuCommandEditExternally(15)
+		Include#MenuItemEditExternally(16), /Q, Include#MenuCommandEditExternally(16)
+		Include#MenuItemEditExternally(17), /Q, Include#MenuCommandEditExternally(17)
+		Include#MenuItemEditExternally(18), /Q, Include#MenuCommandEditExternally(18)
+		Include#MenuItemEditExternally(19), /Q, Include#MenuCommandEditExternally(19)
+		Include#MenuItemEditExternally(20), /Q, Include#MenuCommandEditExternally(20)
+		Include#MenuItemEditExternally(21), /Q, Include#MenuCommandEditExternally(21)
+		Include#MenuItemEditExternally(22), /Q, Include#MenuCommandEditExternally(22)
+		Include#MenuItemEditExternally(23), /Q, Include#MenuCommandEditExternally(23)
+		Include#MenuItemEditExternally(24), /Q, Include#MenuCommandEditExternally(24)
+		Include#MenuItemEditExternally(25), /Q, Include#MenuCommandEditExternally(25)
+		Include#MenuItemEditExternally(26), /Q, Include#MenuCommandEditExternally(26)
+		Include#MenuItemEditExternally(27), /Q, Include#MenuCommandEditExternally(27)
+		Include#MenuItemEditExternally(28), /Q, Include#MenuCommandEditExternally(28)
+		Include#MenuItemEditExternally(29), /Q, Include#MenuCommandEditExternally(29)
+	End
 End
 
-Function Include(procName [comment,define,override])
-	String procName,comment,define,override
-	comment  =SelectString(ParamIsDefault(comment ),comment ,"")
-	define   =SelectString(ParamIsDefault(define  ),define  ,"")
-	;override=SelectString(ParamIsDefault(override),override,"")
-	return Add(procName,comment=comment,define=define,override=override)
+static Function/S MenuItemInclude()
+	return SelectString( NumberByKey("N_PARAMS",FunctionInfo(Include_ListFunction))==0 ,"(","")+"Include"
 End
-static Function Add(procName [comment,define,override]) // for include_proxy.ipf
-	String procName,comment,define,override
-	comment  =SelectString(ParamIsDefault(comment ),comment ,"")
-	define   =SelectString(ParamIsDefault(define  ),define  ,"")
-	;override=SelectString(ParamIsDefault(override),override,"")
-	WAVE/T w=$INCLUDE_PATH
-	if(WaveExists(w))
-		Make/FREE/N=(DimSize(w,0)) f=abs(cmpstr(w,procName))
-		if(DimSize(f,0)==0 || WaveMin(f)==1)
-			InsertPoints DimSize(w,0),1,w
-			w[inf][%procName]=procName
-			w[inf][%comment ]=comment
-			w[inf][%define  ]=RemoveFromList("",AddListItem(define  ,w[inf][%define  ]))
-			w[inf][%override]=RemoveFromList("",AddListItem(override,w[inf][%override]))
-		else
-			WaveStats/Q/Z f;
-			w[V_minloc][%comment ]+=comment
-			w[V_minloc][%define  ]=RemoveFromList("",AddListItem(define  ,w[V_minloc][%define  ]))
-			w[V_minloc][%override]=RemoveFromList("",AddListItem(override,w[V_minloc][%override]))
-		endif
-	endif
+static Function MenuCommandInclude()
+	Execute/Z Include_ListFunction+"()"
+End
+static Function/S MenuItemExclude()
+	return SelectString(strlen(WinRecreation(Include_BufferFileName+".ipf",-2)),"(","")+"Exclude"
+End
+static Function MenuCommandExclude()
+	Execute/P "DELETEINCLUDE \""+Include_BufferFileName+"\""
+	Execute/P "COMPILEPROCEDURES "
 End
 
-static Function ListIsDefined()
-	String info = FunctionInfo("IncludeList")
-	return NumberByKey("N_PARAMS",info)==0 
-End
-static Function ListExists()
-	WAVE/T w=$INCLUDE_PATH
-	return WaveExists(w)
-End
-
-static Function/S Item(n)
+static Function/S MenuItemEditInternally(n)
 	Variable n
-	if(ListExists())
-		WAVE/T w=$INCLUDE_PATH
-		return SelectString(n<DimSize(w,0),"",w[n])
+	WAVE/T ps = root:Packages:include:procedures_sorted
+	if(!WaveExists(ps) || n>=DimSize(ps,0))
+		return ""
+	elseif(strlen(WinRecreation(Include_BufferFileName+".ipf",-2)))
+		return ps[n]	
+	else
+		return "("+ps[n]
 	endif
 End
-static Function/S IncludedItem(n)
+static Function/S MenuCommandEditInternally(n)
 	Variable n
-	if(strlen(Item(n)))
-		return Item(n)+SelectString(strlen(WinList(Item(n)+".ipf",";","WIN:128")),"(","")
-	endif
+	WAVE/T ps = root:Packages:include:procedures_sorted
+	EditInternally(ps[n])
 End
 
-static strconstant INCLUDE_PATH="root:Packages:Include:procedures"
-static strconstant INCLUDE_PATH_OVER="root:Packages:Include:overrides"
-static Function IncludeAll()
-	if(!ListIsDefined())
-		return NaN
+static Function/S MenuItemEditExternally(n)
+	Variable n
+	WAVE/T ps = root:Packages:include:procedures_sorted
+	if(!WaveExists(ps) || n>=DimSize(ps,0))
+		return ""
+	elseif(strlen(WinRecreation(Include_BufferFileName+".ipf",-2)))
+		return ps[n]	
+	else
+		return "("+ps[n]
 	endif
+End
+static Function/S MenuCommandEditExternally(n)
+	Variable n
+	WAVE/T ps = root:Packages:include:procedures_sorted
+	EditExternally(ps[n])
+End
+
+
+static Function start()
+	Variable refnum
 	NewDataFolder/O root:Packages
 	NewDataFolder/O root:Packages:Include
-	Make/O/T/N=(0,4) $INCLUDE_PATH/WAVE=w // remake the list
-	if(!WaveExists($INCLUDE_PATH_OVER))
-		Make/O/T/N=0 $INCLUDE_PATH_OVER	
+	KillWaves/Z  root:Packages:Include:procedures
+	Make/O/T/N=0 root:Packages:Include:procedures
+End
+
+override Function include(s)
+	String s
+	WAVE/T ps = root:Packages:Include:procedures
+	if(WaveExists(ps))
+		InsertPoints DimSize(ps,0),1,ps
+		ps[inf] = s
 	endif
-	SetDimLabel 1,0,procName,w
-	SetDimLabel 1,1,comment ,w
-	SetDimLabel 1,2,define  ,w
-	SetDimLabel 1,3,override,w
-	Execute/Z/Q "IncludeList()"
-	Variable i
-	for(i=0;i<DimSize(w,0);i+=1)
-		Execute/P/Z/Q "DELETEINCLUDE \""+w[i][%procName]+"\""		
-		String cmd="INSERTINCLUDE \""+w[i][%procName]+"\"" // Add procName
-		cmd += SelectString(strlen(w[i][%comment]),""," //")+w[i][%comment] // Add comment
-		if(ItemsInList(w[i][%define])) // Add define
-			Variable j
-			for(j=0;j<ItemsInList(w[i][%define]);j+=1)
-				if(!defined($StringFromList(j,w[i][%define])))
-					cmd+="\r#define "+StringFromList(j,w[i][%define])
-				endif
-			endfor
-		endif
-		if(ItemsInList(w[i][%override])) //Add override
-			Variable k; WAVE/T over=$INCLUDE_PATH_OVER
-			for(k=0;k<ItemsInList(w[i][%override]);k+=1)
-				String overexpr=StringFromList(k,w[i][%override])
-				Make/FREE/N=(DimSize(over,0)) f=abs(cmpstr(over,overexpr))
-				if(DimSize(f,0)==0||WaveMin(f)>0)
-					InsertPoints DimSize(over,0),1,over; over[inf]=overexpr
-					if(GrepString(overexpr,"= *[0-9]*(.[0-9]+)? *$"))
-						cmd+="\roverride constant "+overexpr
-					elseif(GrepString(overexpr,"= *\".*\" *$"))
-						cmd+="\roverride strconstant "+overexpr	
-					endif
-				endif
-			endfor
-		endif
-		Execute/P/Z/Q cmd
-	endfor
-	Execute/P/Z/Q "COMPILEPROCEDURES "
 End
 
-static Function ExcludeAll()
-	WAVE/T w=$INCLUDE_PATH; Variable i
-	for(i=0;i<DimSize(w,0);i+=1)
-		Execute/P/Z/Q "DELETEINCLUDE \""+w[i][%procName]+"\""
-	endfor
-	Execute/P/Z/Q "COMPILEPROCEDURES "
-End
-static Function Exclude(procName)
-	String procName
-	Execute/P/Z/Q "DELETEINCLUDE \""+procName+"\""	
-	Execute/P/Z/Q "COMPILEPROCEDURES "
-End
-
-static Function ExEdit(procName)
-	String procName
-	String funcName=StringFromList(0,FunctionList("*",";","WIN:"+procName+".ipf"))
-	if(strlen(funcName)<1)
+static Function finish()
+	WAVE/T ps = root:Packages:Include:procedures
+	if(!WaveExists(ps))
 		return NaN
 	endif
-	Execute/P/Z/Q "DELETEINCLUDE \""+procName+"\""	
-	Execute/P/Z/Q "COMPILEPROCEDURES "
-	String procPath=FunctionPath(funcName)
-	strSwitch(IgorInfo(2))
+	Duplicate/O ps $"root:Packages:Include:procedures_sorted"/WAVE=sorted
+	Sort sorted, sorted
+	
+	Execute/P   "DELETEINCLUDE \""+Include_BufferFileName+"\""
+	Execute/P   "COMPILEPROCEDURES "
+	Execute/P/Q "include#MakeBufferFile()"
+	Execute/P   "INSERTINCLUDE \""+Include_BufferFileName+"\",optional"
+	Execute/P   "COMPILEPROCEDURES "
+End
+
+static Function MakeBufferFile()
+	WAVE/T ps = root:Packages:Include:procedures
+	Variable refnum; String path
+	sprintf path,"%sUser Procedures:%s.ipf",SpecialDirPath("Igor Pro User Files",0,0,0),Include_BufferFileName
+	Open/Z refnum as path
+	if(WaveExists(ps) && !V_Flag)
+		// Make it invisible
+		SetFileFolderInfo/INV=1/RO=1 path
+		
+		Variable i,N=DimSize(ps,0)
+		for(i=0;i<N;i+=1)
+			fprintf refnum,"#include \"%s\", optional\r",ps[i]	
+		endfor
+		Close refnum
+	endif
+End
+
+static Function EditInternally(procname)
+	String procname
+	DisplayProcedure/W=$procname+".ipf"
+End
+
+static Function EditExternally(procname)
+	String procname
+	String path
+	SPlitString/E="\"([^\"]*)\"" StringFromList(1,WinRecreation(procname+".ipf",-2),"\r"), path
+	if(strlen(path)==0)
+		return NaN
+	endif
+	path += procname+".ipf"
+
+	Execute/P   "DELETEINCLUDE \""+Include_BufferFileName+"\""
+	Execute/P   "COMPILEPROCEDURES "
+	
+	String cmd; sprintf cmd,"include#EditExternally_(\"%s\",\"%s\")",procname,path
+	Execute/P/Q cmd
+End
+
+static Function EditExternally_(procname,path)
+	String procname,path
+	if(strlen(WinRecreation(procname+".ipf",-2)))
+		return NaN
+	endif	
+	String cmd
+	StrSwitch(IgorInfo(2))
 	case "Macintosh":
-		if(strlen(Include_MacEditor)==0)
-			break
-		endif
-		procPath=procPath[strlen("Macintosh HD"),inf] 
-		procPath=ReplaceString(":",procPath,"'/'")[1,inf]+"'" // escape with ''
-		ExecuteScriptText "do shell script \"open -a "+Include_MacEditor+" "+procPath+"\""
-	break
+		SplitString/E="^Macintosh HD:(.*)" path, path
+		path = "/'"+ReplaceString(":",path,"'/'")+"'"
+		sprintf cmd,"do shell script \"open -a %s %s\"",Include_MacEditor,path
+		break
 	case "Windows":
-		if(strlen(Include_WinEditor)==0)
-			break
-		endif
-		procPath="\"C:"+ReplaceString(":",procPath[strlen("C"),inf],"\\")+"\"" // escape with ""
-		ExecuteScriptText "\""+Include_WinEditor+"\" "+procPath
-	break
-	endSwitch
+		sprintf cmd,"\"%s\" \"%s\"",Include_WinEditor,path
+		break
+	EndSwitch
+	ExecuteScriptText cmd
 End
-
-static Function InEdit(procName)
-	String procName
-	DisplayProcedure/W=$procName+".ipf"
-End
-
-static Function IsExEditable()
-	strSwitch(IgorInfo(2))
-	case "Macintosh":
-		if(strlen(Include_MacEditor))
-			return 1
-		endif
-	break
-	case "Windows":
-		if(strlen(Include_WinEditor))
-			return 1
-		endif
-	break
-	endSwitch
-	return 0
-End
-
-
-#endif
