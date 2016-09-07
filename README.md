@@ -22,6 +22,7 @@ Procedure file manager for Igor Pro
 4. If you want to use your favorite editor, write the following in the main procedure window.
   
   ```igorpro
+  // Example
   override strconstant Include_WinEditor="C:\Program Files\vim74-kaoriya-win64\gvim.exe"
   override strconstant Include_MacEditor="MacVim"
   ```
