@@ -72,7 +72,7 @@ End
 static Function/S MenuCommandEditExternally(n)
 	Variable n
 	WAVE/T ps = root:Packages:include:procedures_sorted
-	OpenWithEditor(ps[n])
+	EditExternally(ps[n])
 End
 
 
@@ -125,7 +125,7 @@ static Function MakeBufferFile()
 	endif
 End
 
-static Function OpenWithEditor(procname)
+static Function EditExternally(procname)
 	String procname
 	String path
 	SPlitString/E="\"([^\"]*)\"" StringFromList(1,WinRecreation(procname+".ipf",-2),"\r"), path
@@ -137,11 +137,11 @@ static Function OpenWithEditor(procname)
 	Execute/P   "DELETEINCLUDE \""+Include_BufferFileName+"\""
 	Execute/P   "COMPILEPROCEDURES "
 	
-	String cmd; sprintf cmd,"include#OpenWithEditor_(\"%s\",\"%s\")",procname,path
+	String cmd; sprintf cmd,"include#EditExternally_(\"%s\",\"%s\")",procname,path
 	Execute/P/Q cmd
 End
 
-static Function OpenWithEditor_(procname,path)
+static Function EditExternally_(procname,path)
 	String procname,path
 	if(strlen(WinRecreation(procname+".ipf",-2)))
 		return NaN
